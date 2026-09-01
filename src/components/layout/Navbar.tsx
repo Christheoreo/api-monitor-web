@@ -25,7 +25,7 @@ export function Navbar() {
             to={link.to}
             end={link.to === "/"}
             className={({ isActive }) =>
-              isActive ? "text-accent" : "text-text-secondary hover:text-white"
+              isActive ? "text-brand" : "text-text-secondary hover:text-white"
             }
           >
             {link.label}
