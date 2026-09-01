@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
 import { LogoutButton } from "../../features/auth/LogoutButton";
+import { Button } from "../ui/button";
 
 const navLinks = [
   { to: "/", label: "Dashboard" },
@@ -31,9 +32,7 @@ export function Navbar() {
           </NavLink>
         ))}
         <LogoutButton />
-        <button className="rounded bg-accent px-4 py-2 font-semibold hover:bg-accent-hover">
-          + Add Endpoint
-        </button>
+        <Button>+ Add Endpoint</Button>
       </nav>
     </header>
   );

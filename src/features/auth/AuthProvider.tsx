@@ -38,20 +38,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Token just became available (mount-restore OR reactive refresh
-      // after a 401) — hydrate the user before flipping to authenticated,
-      // so consumers never see status:"authenticated" with user:null.
+      // Token just arrived — flip to "loading" immediately so ProtectedRoute
+      // waits instead of bouncing to /login during the hydration gap below.
+      setStatus("loading");
+
       fetchCurrentUser()
         .then((me) => {
           setUser(me);
           setStatus("authenticated");
         })
         .catch(() => {
-          tokenStore.set(null); // token was bad/stale — bounce to unauthenticated
+          tokenStore.set(null);
         });
     });
 
-    refreshAccessToken(); // attempts session restore via the httpOnly cookie
+    refreshAccessToken();
 
     return unsubscribe;
   }, []);

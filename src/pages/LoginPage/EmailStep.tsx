@@ -2,6 +2,9 @@ import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { requestCode } from "../../lib/api/auth";
+import { mapRequestCodeError } from "../../lib/api/errorMessages";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 
 const emailSchema = z.email();
 
@@ -30,22 +33,34 @@ export function EmailStep({ onCodeSent }: EmailStepProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        disabled={mutation.isPending}
-        autoFocus
-      />
-      {validationError && <p role="alert">{validationError}</p>}
-      {/* Generic on API failure too — no "no account found" messaging, matches backend's no-enumeration behavior */}
-      {mutation.isError && <p role="alert">Something went wrong. Try again.</p>}
-      <button type="submit" disabled={mutation.isPending}>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-1.5">
+        <label htmlFor="email" className="text-sm font-medium">
+          Email
+        </label>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={mutation.isPending}
+          autoFocus
+          placeholder="you@example.com"
+        />
+      </div>
+      {validationError && (
+        <p role="alert" className="text-sm text-down-text">
+          {validationError}
+        </p>
+      )}
+      {mutation.isError && (
+        <p role="alert" className="text-sm text-down-text">
+          {mapRequestCodeError(mutation.error)}
+        </p>
+      )}
+      <Button type="submit" disabled={mutation.isPending} className="w-full">
         {mutation.isPending ? "Sending..." : "Send code"}
-      </button>
+      </Button>
     </form>
   );
 }

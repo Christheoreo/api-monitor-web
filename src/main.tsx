@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { AppLayout } from "./components/layout/AppLayout";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import {
   MutationCache,
   QueryCache,
@@ -15,6 +15,8 @@ import { tokenStore } from "./lib/api/tokenStore.ts";
 import { AuthProvider } from "./features/auth/AuthProvider.tsx";
 import { ProtectedRoute } from "./features/auth/ProtectedRoute.tsx";
 import { LoginPage } from "./pages/LoginPage/index.tsx";
+import App from "./App.tsx";
+import { Dashboard } from "./pages/LoginPage/Dashboard/index.tsx";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -45,8 +47,15 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/login" element={<LoginPage />} />
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<App />} />
-              {/* any other protected routes go here, all covered by one guard */}
+              <Route
+                element={
+                  <AppLayout>
+                    <Outlet />
+                  </AppLayout>
+                }
+              >
+                <Route path="/" element={<Dashboard />} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>

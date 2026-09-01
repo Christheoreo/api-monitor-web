@@ -67,7 +67,7 @@ export async function apiFetch<T>(
       ...rest,
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
+        ...(rest.body ? { "Content-Type": "application/json" } : {}),
         ...(token && !skipAuth ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
