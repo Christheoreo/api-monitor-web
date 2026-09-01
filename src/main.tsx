@@ -15,7 +15,6 @@ import { tokenStore } from "./lib/api/tokenStore.ts";
 import { AuthProvider } from "./features/auth/AuthProvider.tsx";
 import { ProtectedRoute } from "./features/auth/ProtectedRoute.tsx";
 import { LoginPage } from "./pages/LoginPage/index.tsx";
-import App from "./App.tsx";
 import { Dashboard } from "./pages/LoginPage/Dashboard/index.tsx";
 
 const queryClient = new QueryClient({
