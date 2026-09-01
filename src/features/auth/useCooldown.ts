@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 export function useCooldown(seconds: number) {
   const [remaining, setRemaining] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
-    undefined,
-  );
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   useEffect(() => () => clearInterval(timerRef.current), []);
 
   const start = () => {

@@ -42,22 +42,14 @@ export function EndpointTable({ endpoints, onEdit }: EndpointTableProps) {
               <StatusBadge status={endpoint.status} />
             </TableCell>
             <TableCell>
-              {endpoint.responseTimeMs !== null
-                ? `${endpoint.responseTimeMs} ms`
-                : "—"}
+              {endpoint.responseTimeMs !== null ? `${endpoint.responseTimeMs} ms` : "—"}
             </TableCell>
-            <TableCell className="text-text-secondary">
-              {endpoint.lastCheckedLabel}
-            </TableCell>
+            <TableCell className="text-text-secondary">{endpoint.lastCheckedLabel}</TableCell>
             <TableCell>
               <UptimeBar percent={endpoint.uptimePercent} />
             </TableCell>
             <TableCell>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onEdit(endpoint)}
-              >
+              <Button variant="outline" size="sm" onClick={() => onEdit(endpoint)}>
                 Edit
               </Button>
             </TableCell>

@@ -3,10 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../../features/auth/AuthProvider";
 import { requestCode } from "../../lib/api/auth";
 import { useCooldown } from "../../features/auth/useCooldown";
-import {
-  mapVerifyCodeError,
-  mapRequestCodeError,
-} from "../../lib/api/errorMessages";
+import { mapVerifyCodeError, mapRequestCodeError } from "../../lib/api/errorMessages";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
@@ -74,11 +71,7 @@ export function CodeStep({ email, onBack, onVerified }: CodeStepProps) {
       </form>
 
       <div className="flex items-center justify-between text-sm">
-        <button
-          type="button"
-          onClick={onBack}
-          className="text-text-secondary hover:text-white"
-        >
+        <button type="button" onClick={onBack} className="text-text-secondary hover:text-white">
           Use a different email
         </button>
         <button
@@ -87,9 +80,7 @@ export function CodeStep({ email, onBack, onVerified }: CodeStepProps) {
           disabled={resendCooldown.isActive || resendMutation.isPending}
           className="text-brand hover:text-brand-hover disabled:text-text-secondary disabled:opacity-50"
         >
-          {resendCooldown.isActive
-            ? `Resend in ${resendCooldown.remaining}s`
-            : "Resend code"}
+          {resendCooldown.isActive ? `Resend in ${resendCooldown.remaining}s` : "Resend code"}
         </button>
       </div>
       {resendMutation.isError && (

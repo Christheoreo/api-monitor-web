@@ -2,12 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { EmailStep } from "./EmailStep";
 import { CodeStep } from "./CodeStep";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 
 interface LocationState {
   from?: { pathname: string };
@@ -33,9 +28,7 @@ export function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              {step === "email" ? "Sign in" : "Enter your code"}
-            </CardTitle>
+            <CardTitle>{step === "email" ? "Sign in" : "Enter your code"}</CardTitle>
           </CardHeader>
           <CardContent>
             {step === "email" ? (

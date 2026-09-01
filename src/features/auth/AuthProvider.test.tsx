@@ -28,10 +28,7 @@ beforeEach(() => {
   vi.restoreAllMocks();
   // Every AuthProvider mounts and immediately calls refreshAccessToken();
   // default to "no session" so tests start from a clean, deterministic state.
-  vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue(new Response(null, { status: 401 })),
-  );
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 401 })));
 });
 
 describe("AuthProvider logout", () => {
@@ -65,20 +62,12 @@ describe("AuthProvider logout", () => {
       </AuthProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId("status")).toHaveTextContent("authenticated"),
-    );
-    expect(screen.getByTestId("user")).toHaveTextContent(
-      "chris@example.com",
-    );
+    await waitFor(() => expect(screen.getByTestId("status")).toHaveTextContent("authenticated"));
+    expect(screen.getByTestId("user")).toHaveTextContent("chris@example.com");
 
     await userEvent.click(screen.getByRole("button", { name: /logout/i }));
 
-    await waitFor(() =>
-      expect(screen.getByTestId("status")).toHaveTextContent(
-        "unauthenticated",
-      ),
-    );
+    await waitFor(() => expect(screen.getByTestId("status")).toHaveTextContent("unauthenticated"));
     expect(screen.getByTestId("user")).toHaveTextContent("none");
     expect(tokenStore.get()).toBeNull();
   });

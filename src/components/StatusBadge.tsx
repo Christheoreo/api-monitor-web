@@ -9,9 +9,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <Badge
       className={
-        isUp
-          ? "bg-up-bg text-up-text hover:bg-up-bg"
-          : "bg-down-bg text-down-text hover:bg-down-bg"
+        isUp ? "bg-up-bg text-up-text hover:bg-up-bg" : "bg-down-bg text-down-text hover:bg-down-bg"
       }
     >
       {isUp ? "Up" : "Down"}

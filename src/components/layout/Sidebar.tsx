@@ -11,9 +11,7 @@ interface SidebarProps {
 export function Sidebar({ endpoints }: SidebarProps) {
   return (
     <aside className="w-64 border-r border-border p-6">
-      <h2 className="mb-4 text-xs font-semibold tracking-wide text-text-secondary">
-        Endpoints
-      </h2>
+      <h2 className="mb-4 text-xs font-semibold tracking-wide text-text-secondary">Endpoints</h2>
       <ul className="space-y-3">
         {endpoints.map((endpoint) => (
           <li key={endpoint.id} className="flex items-center gap-2">

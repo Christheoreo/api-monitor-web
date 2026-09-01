@@ -55,10 +55,7 @@ interface RequestOptions extends RequestInit {
   skipAuth?: boolean; // for request-code / verify-code — no access token to send yet
 }
 
-export async function apiFetch<T>(
-  path: string,
-  options: RequestOptions = {},
-): Promise<T> {
+export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { skipAuth, headers, ...rest } = options;
 
   const doFetch = () => {

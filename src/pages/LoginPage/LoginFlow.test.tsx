@@ -51,10 +51,7 @@ async function goToCodeStep(fetchMock: ReturnType<typeof vi.fn>) {
   vi.stubGlobal("fetch", fetchMock);
   renderLoginPage();
 
-  await userEvent.type(
-    screen.getByLabelText(/email/i),
-    "chris@example.com",
-  );
+  await userEvent.type(screen.getByLabelText(/email/i), "chris@example.com");
   await userEvent.click(screen.getByRole("button", { name: /send code/i }));
 
   await screen.findByLabelText(/6-digit code/i);
@@ -70,8 +67,7 @@ describe("login flow", () => {
         return Promise.resolve(jsonResponse({ message: "sent" }));
       if (path.includes("/auth/verify-code"))
         return Promise.resolve(jsonResponse({ accessToken: "access-123" }));
-      if (path.includes("/auth/user"))
-        return Promise.resolve(jsonResponse(VALID_USER));
+      if (path.includes("/auth/user")) return Promise.resolve(jsonResponse(VALID_USER));
       return Promise.resolve(new Response(null, { status: 404 }));
     });
 
@@ -95,13 +91,9 @@ describe("login flow", () => {
     // own zod validation in the submit handler instead of the browser's.
     fireEvent.submit(screen.getByRole("button", { name: /send code/i }).closest("form")!);
 
+    expect(await screen.findByText(/enter a valid email/i)).toBeInTheDocument();
     expect(
-      await screen.findByText(/enter a valid email/i),
-    ).toBeInTheDocument();
-    expect(
-      fetchMock.mock.calls.some((call) =>
-        call[0].toString().includes("/auth/request-code"),
-      ),
+      fetchMock.mock.calls.some((call) => call[0].toString().includes("/auth/request-code")),
     ).toBe(false);
   });
 
@@ -114,10 +106,7 @@ describe("login flow", () => {
         return Promise.resolve(jsonResponse({ message: "sent" }));
       if (path.includes("/auth/verify-code"))
         return Promise.resolve(
-          jsonResponse(
-            { message: "Invalid or expired code" },
-            { status: 400 },
-          ),
+          jsonResponse({ message: "Invalid or expired code" }, { status: 400 }),
         );
       return Promise.resolve(new Response(null, { status: 404 }));
     });
@@ -127,9 +116,7 @@ describe("login flow", () => {
     await userEvent.type(screen.getByLabelText(/6-digit code/i), "000000");
     await userEvent.click(screen.getByRole("button", { name: /verify/i }));
 
-    expect(
-      await screen.findByText(/invalid or has expired/i),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/invalid or has expired/i)).toBeInTheDocument();
     expect(tokenStore.get()).toBeNull();
   });
 
@@ -141,9 +128,7 @@ describe("login flow", () => {
       if (path.includes("/auth/request-code"))
         return Promise.resolve(jsonResponse({ message: "sent" }));
       if (path.includes("/auth/verify-code"))
-        return Promise.resolve(
-          jsonResponse({ message: "Too many attempts" }, { status: 429 }),
-        );
+        return Promise.resolve(jsonResponse({ message: "Too many attempts" }, { status: 429 }));
       return Promise.resolve(new Response(null, { status: 404 }));
     });
 

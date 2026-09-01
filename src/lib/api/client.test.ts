@@ -33,9 +33,7 @@ describe("apiFetch — silent refresh on 401", () => {
 
     expect(result).toEqual({ ok: true });
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(fetchMock.mock.calls[1][0]).toEqual(
-      expect.stringContaining("/auth/refresh"),
-    );
+    expect(fetchMock.mock.calls[1][0]).toEqual(expect.stringContaining("/auth/refresh"));
     expect(tokenStore.get()).toBe("fresh-token");
   });
 
@@ -85,10 +83,7 @@ describe("apiFetch — silent refresh on 401", () => {
 
   it("returns null and clears the token when the refresh request throws", async () => {
     tokenStore.set("stale-token");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockRejectedValue(new Error("network down")),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")));
 
     const token = await refreshAccessToken();
 
