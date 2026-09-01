@@ -65,6 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     try {
       await logoutApi();
+    } catch {
+      // Best-effort: clear local state below regardless of network failure.
     } finally {
       tokenStore.set(null);
     }
