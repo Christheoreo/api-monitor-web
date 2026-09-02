@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  type ReactNode,
+} from "react";
 import { tokenStore } from "../../lib/api/tokenStore";
 import { refreshAccessToken } from "../../lib/api/client";
 import {
@@ -23,28 +31,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<User | null>(null);
 
+  // Monotonic generation counter — bumped every time the token changes,
+  // regardless of whether the new value happens to match an old one.
+  const generationRef = useRef(0);
+
   useEffect(() => {
     const unsubscribe = tokenStore.subscribe((token) => {
+      const generation = ++generationRef.current;
+
       if (!token) {
         setStatus("unauthenticated");
         setUser(null);
         return;
       }
 
-      // Token just arrived — flip to "loading" immediately so ProtectedRoute
-      // waits instead of bouncing to /login during the hydration gap below.
       setStatus("loading");
 
       fetchCurrentUser()
         .then((me) => {
-          // Ignore stale completions: the token may have changed (logout,
-          // refresh, or a newer login) while this request was in flight.
-          if (tokenStore.get() !== token) return;
+          // Ignore stale completions: a newer token event (logout, refresh,
+          // or a subsequent login) may have superseded this one, even if
+          // the token value itself is unchanged or coincidentally repeats.
+          if (generationRef.current !== generation) return;
           setUser(me);
           setStatus("authenticated");
         })
         .catch(() => {
-          if (tokenStore.get() !== token) return;
+          if (generationRef.current !== generation) return;
           tokenStore.set(null);
         });
     });
