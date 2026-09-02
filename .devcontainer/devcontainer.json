@@ -1,0 +1,57 @@
+{
+  "name": "react-frontend",
+
+  // Official Node.js dev container image (Debian Bookworm base, Node 24).
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm",
+
+  "features": {
+    // Official Anthropic feature. Installs the `claude` CLI (npm-based) and
+    // pulls in Node.js as a dependency if it isn't already present.
+    // https://github.com/anthropics/devcontainer-features
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Claude Code's native VS Code panel (sidebar chat, inline diffs).
+        "anthropic.claude-code",
+
+        // A few extras that pair naturally with a Vite + React + TS setup.
+        // Delete any of these you don't want.
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+
+  // Vite's default dev server port. Add 3000 etc. if your backend also runs here.
+  "forwardPorts": [5173],
+
+  // Persist Claude Code's login/session state across container rebuilds,
+  // so you're not re-authenticating every time you rebuild.
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    // Separate volume just for ~/.claude.json (see setup script) — that
+    // file lives outside ~/.claude/ so the mount above doesn't cover it.
+    "source=claude-json-config-${devcontainerId},target=/home/node/.claude-json-data,type=volume"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    // Pulled from your HOST shell environment at container-creation time.
+    // See the setup note below — this avoids the broken in-container
+    // OAuth browser callback entirely.
+    "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}"
+  },
+
+  // Fixes volume ownership + symlinks ~/.claude.json into a persisted
+  // volume, then does normal npm install. See setup-claude-persistence.sh.
+  "postCreateCommand": "bash .devcontainer/setup-claude-persistence.sh",
+
+  "remoteUser": "node"
+}
