@@ -25,6 +25,11 @@ let refreshPromise: Promise<string | null> | null = null;
 export async function refreshAccessToken(): Promise<string | null> {
   if (refreshPromise) return refreshPromise;
 
+  // Snapshot the store version now. If a logout or login writes to the store
+  // while this request is in flight, the compare-and-set below is rejected so
+  // we never restore a superseded session.
+  const startVersion = tokenStore.getVersion();
+
   refreshPromise = (async () => {
     try {
       const res = await fetch(`${API_BASE}/auth/refresh`, {
@@ -33,15 +38,17 @@ export async function refreshAccessToken(): Promise<string | null> {
       });
 
       if (!res.ok) {
-        tokenStore.set(null);
+        tokenStore.setIfVersion(startVersion, null);
         return null;
       }
 
       const data = await res.json();
-      tokenStore.set(data.accessToken);
-      return data.accessToken as string;
+      const applied = tokenStore.setIfVersion(startVersion, data.accessToken);
+      // If a newer login/logout already superseded us, defer to the current
+      // token so a 401 retry uses the live session rather than our stale one.
+      return applied ? (data.accessToken as string) : tokenStore.get();
     } catch {
-      tokenStore.set(null);
+      tokenStore.setIfVersion(startVersion, null);
       return null;
     } finally {
       refreshPromise = null; // clear so the NEXT 401 can trigger a fresh refresh
