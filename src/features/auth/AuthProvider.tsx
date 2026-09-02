@@ -37,10 +37,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       fetchCurrentUser()
         .then((me) => {
+          // Ignore stale completions: the token may have changed (logout,
+          // refresh, or a newer login) while this request was in flight.
+          if (tokenStore.get() !== token) return;
           setUser(me);
           setStatus("authenticated");
         })
         .catch(() => {
+          if (tokenStore.get() !== token) return;
           tokenStore.set(null);
         });
     });
